@@ -2,111 +2,148 @@ import { StyleSheet, Dimensions } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
-// Renk Tanımları
-const DARK_GREEN = '#16B576';
-const LIGHT_GREEN = '#B7EACD';
 const DARK_BLUE = '#2F3A66';
-const MOR = '#5F4890'; 
-const GREY_DISABLED = '#D1D5DB'; // Hafif gri, devre dışı bırakılmış buton için
+const SOFT_WHITE = '#FDFCFB';
+const ACCENT_ORANGE = '#FF8E6D';
+const MUTED_TEXT = '#64748B';
+const LIGHT_GREEN = '#16B576';
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FFF',
+        backgroundColor: SOFT_WHITE,
     },
     header: {
-        paddingHorizontal: 20,
-        paddingTop: 60,
-        paddingBottom: 20,
-        backgroundColor: MOR,
-        borderBottomLeftRadius: 30,
-        borderBottomRightRadius: 30,
+        paddingHorizontal: 25,
+        paddingTop: 50,
+        paddingBottom: 35,
+        backgroundColor: '#5a79d3',
+        borderBottomLeftRadius: 40,
+        borderBottomRightRadius: 40,
         alignItems: 'center',
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.15,
+        shadowRadius: 12,
+        elevation: 8,
     },
     headerTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
+        fontSize: 26,
+        fontWeight: '800',
         color: '#FFF',
-        marginBottom: 8,
+        marginBottom: 10,
+        letterSpacing: 0.5,
     },
     headerSubtitle: {
-        fontSize: 16,
-        color: LIGHT_GREEN,
+        fontSize: 14,
+        color: '#B7EACD',
         textAlign: 'center',
+        lineHeight: 20,
+        opacity: 0.9,
     },
-    // --- Alışkanlık Listesi ---
     listContentContainer: {
         padding: 20,
-        paddingBottom: 100, // Buton için boşluk
+        paddingBottom: 120, // Butonun arkada kalmaması için boşluk
     },
     habitGrid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
-        marginTop: 10,
+        marginTop: 5,
     },
     habitCardWrapper: {
-        width: (width / 2) - 30, // Ekran genişliğinin yarısı - padding
-        marginBottom: 20,
+        width: (width / 2) - 28,
+        marginBottom: 16,
     },
     habitCard: {
-        minHeight: 150,
-        backgroundColor: LIGHT_GREEN,
-        borderRadius: 15,
+        minHeight: 165,
+        backgroundColor: '#FFF',
+        borderRadius: 24,
         padding: 15,
         alignItems: 'center',
-        justifyContent: 'space-between',
-        borderWidth: 3,
-        borderColor: 'transparent',
+        justifyContent: 'center',
+        borderWidth: 2,
+        borderColor: '#B7EACD', // Normal durumda çok hafif border
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 5,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.05,
+        shadowRadius: 8,
+        elevation: 3,
     },
-    // Seçili durum stili: Koyu yeşil kenarlık ile vurgulanır
     habitCardSelected: {
-        borderColor: DARK_GREEN,
-        backgroundColor: '#E0F0E0', // Hafif bir ton farkı
+        borderColor: '#ef4444', // Mercan rengi kenarlık
+        backgroundColor: '#FFF5F2', // Çok açık şeftali arka plan
     },
     habitIcon: {
-        marginBottom: 10,
-        marginTop: 5,
-        color: DARK_BLUE,
+        marginBottom: 12,
     },
     habitTitle: {
         fontSize: 15,
         fontWeight: '700',
-        color: DARK_BLUE,
+        color: '#2F3A66',
         textAlign: 'center',
+        marginBottom: 6,
     },
-    // --- Başlayalım Butonu ---
+    habitDesc: {
+        fontSize: 11,
+        color: '#64748B',
+        textAlign: 'center',
+        lineHeight: 15,
+    },
+    priorityBadge: {
+        position: 'absolute',
+        top: 10,
+        right: 10,
+        backgroundColor: '#FFEBEB',
+        paddingHorizontal: 6,
+        paddingVertical: 2,
+        borderRadius: 6,
+    },
+    priorityText: {
+        color: '#EF4444',
+        fontSize: 8,
+        fontWeight: '900',
+    },
+    checkBadge: {
+        position: 'absolute',
+        top: 10,
+        left: 10,
+    },
+    // --- Alt Buton Alanı ---
     startButtonContainer: {
         position: 'absolute',
         bottom: 0,
         left: 0,
         right: 0,
-        padding: 20,
-        backgroundColor: '#FFF', // Butonun arkası beyaz
+        padding: 25,
+        paddingBottom: 35, // iPhone çentik uyumu
+        backgroundColor: 'rgba(255, 255, 255, 0.95)', 
         borderTopWidth: 1,
-        borderTopColor: '#EEE',
+        borderTopColor: '#F1F5F9',
+        zIndex: 999,
+        elevation: 20,
     },
     startButton: {
-        paddingVertical: 15,
-        borderRadius: 30,
+        paddingVertical: 18,
+        borderRadius: 20,
         alignItems: 'center',
-        // Devre dışı bırakılmış butonu stilize etmek için 'backgroundColor' dışarı taşındı
+        shadowColor: '#16B576',
+        shadowOffset: { width: 0, height: 5 },
+        shadowOpacity: 0.2,
+        shadowRadius: 10,
+        elevation: 5,
     },
     startButtonEnabled: {
-        backgroundColor: DARK_GREEN,
+        backgroundColor: '#16B576',
     },
     startButtonDisabled: {
-        backgroundColor: GREY_DISABLED,
+        backgroundColor: '#CBD5E1',
     },
     startButtonText: {
-        fontSize: 18,
-        fontWeight: 'bold',
+        fontSize: 16,
+        fontWeight: '800',
         color: '#FFF',
+        letterSpacing: 1,
     },
 });
 

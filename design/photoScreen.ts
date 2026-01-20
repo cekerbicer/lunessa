@@ -2,91 +2,110 @@ import { StyleSheet, Dimensions } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
-// Temanızdaki güncel renk tanımları
-const KOYU_YESIL = '#16B576';
-const ACIK_YESIL = '#B7EACD';
-const KOYU_MAVI = '#2F3A66';
-const ACIK_YESIL_AURA = '#B7EACD'; // Daha açık ACIK_YESIL ton
-
 const styles = StyleSheet.create({
     fullScreenContainer: {
         flex: 1,
-        backgroundColor: ACIK_YESIL, // Ana arkaplan ACIK_YESIL
     },
-    gradientOverlay: {
-        ...StyleSheet.absoluteFillObject,
-        backgroundColor: ACIK_YESIL_AURA,
-        opacity: 0.9, 
+    backgroundImage: {
+        flex: 1,
+        width: '100%',
+        height: '100%',
+    },
+    overlay: {
+        flex: 1,
+        backgroundColor: 'rgba(15, 23, 42, 0.16)', // Karartma
     },
     contentContainer: {
         flex: 1,
-        justifyContent: 'space-between',
         alignItems: 'center',
-        paddingVertical: height * 0.05,
+        justifyContent: 'space-between',
+        paddingVertical: 60,
+    },
+    topInfoArea: {
+        alignItems: 'center',
+    },
+    brandTitle: {
+        fontSize: 28,
+        fontWeight: '900',
+        color: '#FFF',
+        letterSpacing: -1,
+    },
+    brandDesc: {
+        fontSize: 14,
+        color: '#E2E8F0',
+        marginTop: 5,
+    },
+    glassCameraCard: {
+        width: width * 0.85,
+        height: height * 0.5,
+        backgroundColor: 'rgba(255, 255, 255, 0.15)', // Cam efekti
+        borderRadius: 40,
+        padding: 10,
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.3)',
+        overflow: 'hidden',
     },
     cameraPreview: {
         flex: 1,
-        width: '90%',
-        backgroundColor: KOYU_MAVI, // Kamera arkaplanı koyu mavi/siyah
-        borderRadius: 20, // 💡 Kutu değil, yuvarlak köşeli kamera çerçevesi
+        borderRadius: 30,
+        overflow: 'hidden',
+    },
+    scannerOverlay: {
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: height * 0.05,
-        marginBottom: height * 0.05,
-        overflow: 'hidden', 
+        backgroundColor: 'rgba(0,0,0,0.1)',
+    },
+    faceFrame: {
+        width: width * 0.55,
+        height: width * 0.75,
+        borderRadius: 100,
+        borderWidth: 2,
+        borderColor: '#16B576', // Logonun yeşili
+        borderStyle: 'dashed',
     },
     alignFaceText: {
         color: '#FFF',
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: 'bold',
         position: 'absolute',
-        top: 25,
-        zIndex: 1,
-    },
-    faceFrame: {
-        width: width * 0.5,
-        height: width * 0.7,
-        borderRadius: (width * 0.7) / 2,
-        borderWidth: 3,
-        borderColor: KOYU_YESIL, // Çerçeve rengini koyu yeşil yaptım
-        borderStyle: 'solid',
-        position: 'absolute',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    previewText: {
-        color: ACIK_YESIL, // Kamera Önizlemesi metni
-        marginTop: 100
+        bottom: 30,
+        textShadowColor: 'rgba(0,0,0,0.5)',
+        textShadowRadius: 10,
     },
     bottomControls: {
         flexDirection: 'row',
-        justifyContent: 'space-around', 
         alignItems: 'center',
+        justifyContent: 'space-around',
         width: '100%',
-        paddingHorizontal: 30,
-        marginBottom: 20,
+        paddingHorizontal: 40,
     },
-    controlButton: {
-        backgroundColor: KOYU_MAVI, // Galeri butonu arkaplanı koyu mavi
-        borderRadius: 30, 
-        padding: 15,
-        alignItems: 'center',
+    blurButton: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
         justifyContent: 'center',
-    },
-    captureButton: {
-        // Ana çekim butonu
-        backgroundColor: ACIK_YESIL, 
-        borderRadius: 40,
-        padding: 20,
         alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: 3,
-        borderColor: KOYU_YESIL, // Çevreleyen halka koyu yeşil
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.3)',
     },
-    // Çekim butonunu ortalamak için boşluk (eski tasarımda vardı)
-    placeholder: {
-        width: 58, 
-        height: 58,
+    mainCaptureBtn: {
+        width: 85,
+        height: 85,
+        borderRadius: 45,
+        borderWidth: 4,
+        borderColor: '#5165a9',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    innerCaptureBtn: {
+        width: 65,
+        height: 65,
+        borderRadius: 35,
+        backgroundColor: '#fff',
+        justifyContent: 'center',
+        alignItems: 'center',
     }
 });
 

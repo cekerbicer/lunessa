@@ -2,106 +2,120 @@ import { StyleSheet, Dimensions } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
-// Renk Tanımları
-const DARK_GREEN = '#16B576';
-const LIGHT_GREEN = '#B7EACD';
+// Ana Sayfa ile uyumlu renkler
 const DARK_BLUE = '#2F3A66';
-const MOR = '#5F4890'; 
-const GREY = '#F3F4F6';
-const RED_DANGER = '#D9534F'; // Hesaptan çıkış butonu için
+const SOFT_WHITE = '#FDFCFB';
+const ACCENT_ORANGE = '#ff7e52'; 
+const MUTED_TEXT = '#6ec57c';
+const LIGHT_RED = '#ffab91';
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: GREY,
+        backgroundColor: SOFT_WHITE,
     },
-    // --- Başlık ve Kullanıcı Bilgisi ---
+    // --- Başlık Bölümü (Modern Gradyan Etkisi) ---
     header: {
-        backgroundColor: MOR,
+        backgroundColor: '#9beea8',
         paddingHorizontal: 20,
-        paddingVertical: 30,
+        paddingTop: 40,
+        paddingBottom: 40,
         alignItems: 'center',
-        borderBottomLeftRadius: 30,
-        borderBottomRightRadius: 30,
+        borderBottomLeftRadius: 40,
+        borderBottomRightRadius: 40,
         marginBottom: 20,
+        // Gölge efekti
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+        elevation: 10,
     },
     profileAvatar: {
         width: 100,
         height: 100,
         borderRadius: 50,
-        backgroundColor: DARK_GREEN, // Kullanıcının baş harfi için yeşil zemin
+        backgroundColor: 'rgba(255, 255, 255, 0.15)',
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 10,
+        marginBottom: 15,
         borderWidth: 3,
-        borderColor: '#FFF',
+        borderColor: 'rgba(255, 255, 255, 0.3)',
+        overflow: 'hidden',
+    },
+    avatarImage: {
+        width: '100%',
+        height: '100%',
     },
     avatarText: {
+        color: '#FFF',
         fontSize: 40,
         fontWeight: 'bold',
-        color: '#FFF',
     },
     userName: {
-        fontSize: 24,
-        fontWeight: 'bold',
+        fontSize: 22,
+        fontWeight: '800',
         color: '#FFF',
+        letterSpacing: 0.5,
     },
     userEmail: {
         fontSize: 14,
-        color: LIGHT_GREEN,
+        color: '#49bd74',
+        fontWeight:600,
         marginTop: 4,
+        opacity: 0.9,
     },
-    // --- Ayarlar Kartları ---
+    // --- Kartlar ---
     sectionTitle: {
-        fontSize: 18,
+        fontSize: 14,
         fontWeight: 'bold',
-        color: DARK_BLUE,
-        paddingHorizontal: 20,
+        color: MUTED_TEXT,
+        paddingHorizontal: 25,
         marginBottom: 10,
+        marginTop: 10,
+        textTransform: 'uppercase',
+        letterSpacing: 1,
     },
     settingsCard: {
         backgroundColor: '#FFF',
-        borderRadius: 15,
-        marginHorizontal: 15,
+        borderRadius: 24,
+        marginHorizontal: 20,
         marginBottom: 20,
-        padding: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
+        paddingVertical: 8,
+        // Modern hafif gölge
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.05,
+        shadowRadius: 8,
         elevation: 3,
     },
     settingItem: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: 15,
-        paddingHorizontal: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: GREY,
+        paddingVertical: 16,
+        paddingHorizontal: 20,
     },
     settingText: {
         flex: 1,
         fontSize: 16,
         color: DARK_BLUE,
+        fontWeight: '500',
         marginLeft: 15,
     },
-    // Son öğede alt çizgi olmasın
     noBorder: {
         borderBottomWidth: 0,
     },
-    // --- Aksiyon Butonları ---
-    actionButton: {
-        padding: 15,
-        borderRadius: 10,
+    // --- Çıkış Butonu ---
+    logoutButton: {
+        backgroundColor: '#49bd74',
+        padding: 18,
+        borderRadius: 20,
         marginHorizontal: 20,
         marginTop: 10,
-        marginBottom: 10,
+        marginBottom: 40,
+        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        flexDirection: 'row',
-    },
-    logoutButton: {
-        backgroundColor: RED_DANGER,
     },
     actionButtonText: {
         fontSize: 16,
@@ -111,16 +125,21 @@ const styles = StyleSheet.create({
     },
     backButton: {
         position: 'absolute',
-        top: 45, 
+        top: 50, 
         left: 20,
         zIndex: 10,
-        padding: 5, // Tıklama alanını artırmak için
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+        borderRadius: 12,
+        padding: 8,
     },
     profileDetailsContainer: {
         alignItems: 'center',
-        // Geri butonunun üstüne gelmemesi için ek boşluk
-        marginTop: 5, 
     },
+    // Border eklemek için yardımcı stil
+    borderBottom: {
+        borderBottomWidth: 1,
+        borderBottomColor: '#F1F5F9',
+    }
 });
 
 export default styles;

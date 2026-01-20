@@ -1,129 +1,133 @@
-import React, { useRef, useEffect } from 'react';
-import {
-    View,
-    Text,
-    StyleSheet,
-    TouchableOpacity,
-    Dimensions, // Kullanılmadığı için kaldırıldı (sadece stil dosyasında kaldı)
-    StatusBar,
-    Animated,
-    Easing,
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // 👈 YENİ: Navigasyon için
+import React, { useRef, useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, StatusBar, Animated, Easing, Alert, ImageBackground } from 'react-native';
+import { useNavigation, useIsFocused, NavigationProp } from '@react-navigation/native';
 import { Feather, Ionicons } from '@expo/vector-icons';
-
-// İçe aktarılan stil dosyası
+import * as ImagePicker from 'expo-image-picker';
+import { CameraView, Camera } from 'expo-camera';
 import styles from '../../design/photoScreen';
 
-// Renk tanımlarını sadece Icon bileşeninde kullanmak için tanımlıyoruz
-const DARK_BLUE = '#2F3A66';
-const LIGHT_GREEN = '#B7EACD';
-const DARK_GREEN = '#16B576'; // Test butonu için kullanılacak
-
+type RootStackParamList = {
+    Test: { imageUri: string; base64?: string | null; };
+};
 
 export default function PhotoScreen() {
-    const navigation = useNavigation(); // 👈 YENİ: Navigasyon hook'u
-
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+    const isFocused = useIsFocused();
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const pulseAnim = useRef(new Animated.Value(1)).current;
+    
+    const [type, setType] = useState<'front' | 'back'>('front'); // Selfie odaklı olduğu için front varsayılan
+    const cameraRef = useRef<CameraView | null>(null);
+    const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
     useEffect(() => {
-        // Ekranın içeriğinin yavaşça görünmesi için
-        Animated.timing(fadeAnim, {
-            toValue: 1,
-            duration: 800,
-            useNativeDriver: true,
-        }).start();
-
-        // Yüz çerçevesi için nabız (pulse) animasyonu
-        const pulse = Animated.loop(
-            Animated.sequence([
-                Animated.timing(pulseAnim, {
-                    toValue: 1.05,
-                    duration: 1000,
-                    easing: Easing.inOut(Easing.ease),
-                    useNativeDriver: true,
-                }),
-                Animated.timing(pulseAnim, {
-                    toValue: 1,
-                    duration: 1000,
-                    easing: Easing.inOut(Easing.ease),
-                    useNativeDriver: true,
-                }),
-            ])
-        );
-        pulse.start();
-
-        return () => {
-            pulse.stop();
+        const getPermissions = async () => {
+            const { status } = await Camera.requestCameraPermissionsAsync();
+            setHasPermission(status === 'granted');
         };
-    }, []);
 
-    const handleTakePhoto = () => {
-        // Fotoğraf çekme mantığı buraya gelecek
-        alert('Kamera entegrasyonu ve fotoğraf çekme işlemi burada yapılacak.');
+        if (isFocused) {
+            getPermissions();
+            Animated.timing(fadeAnim, { toValue: 1, duration: 800, useNativeDriver: true }).start();
+            Animated.loop(
+                Animated.sequence([
+                    Animated.timing(pulseAnim, { toValue: 1.08, duration: 1200, useNativeDriver: true }),
+                    Animated.timing(pulseAnim, { toValue: 1, duration: 1200, useNativeDriver: true }),
+                ])
+            ).start();
+        }
+    }, [isFocused]);
+
+    const handleTakePhoto = async () => {
+        if (!cameraRef.current) return;
+        try {
+            const photo = await cameraRef.current.takePictureAsync({ quality: 0.5, base64: true });
+            if (photo && photo.uri) {
+                navigation.navigate('Test', { imageUri: photo.uri, base64: photo.base64 });
+            }
+        } catch (error) { Alert.alert("Hata", "Fotoğraf çekilemedi."); }
     };
 
-    const handleOpenGallery = () => {
-        // Galeriye erişim mantığı buraya gelecek
-        alert('Galeri entegrasyonu burada yapılacak.');
+    const handleOpenGallery = async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') return Alert.alert('İzin Yok', 'Galeri izni gerekli.');
+        
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1], // Kare seçim analiz için daha iyidir
+            quality: 0.5,
+            base64: true,
+        });
+
+        if (!result.canceled && result.assets[0]) {
+            navigation.navigate('Test', { imageUri: result.assets[0].uri, base64: result.assets[0].base64 });
+        }
     };
 
-    // 🚀 YENİ FONKSİYON: Test sayfasına yönlendirir
-    const handleTest = () => {
-        // App.tsx'te tanımlanan 'Test' ekranına yönlendir
-        navigation.navigate('Test' as never);
-    };
+    if (hasPermission === null || hasPermission === false) {
+        return <View style={styles.fullScreenContainer} />;
+    }
 
-    // Alt butonlar için üç öğe kullanıyoruz: Galeri butonu, Çekim butonu ve bir placeholder
     return (
         <View style={styles.fullScreenContainer}>
             <StatusBar barStyle="light-content" />
+            
+            {/* Arka Plan Görseli - Giriş sayfasıyla aynı */}
+            <ImageBackground 
+                source={require('../../assets/arkaplan.png')} 
+                style={styles.backgroundImage}
+            >
+                <View style={styles.overlay}>
+                    <Animated.View style={[styles.contentContainer, { opacity: fadeAnim }]}>
+                        
+                        {/* Üst Bilgi Alanı */}
+                        <View style={styles.topInfoArea}>
+                            <Text style={styles.brandTitle}>Cilt Analizi</Text>
+                            <Text style={styles.brandDesc}>Işıltını ölçmek için bir selfie çek.</Text>
+                        </View>
 
-            {/* Arkaplan gradient'i (placeholder) */}
-            <View style={styles.gradientOverlay} />
+                        {/* Kamera Alanı - Glassmorphism Kart İçinde */}
+                        <View style={styles.glassCameraCard}>
+                            {isFocused && (
+                                <CameraView
+                                    style={styles.cameraPreview}
+                                    facing={type}
+                                    ref={cameraRef}
+                                >
+                                    <View style={styles.scannerOverlay}>
+                                        <Animated.View
+                                            style={[
+                                                styles.faceFrame,
+                                                { transform: [{ scale: pulseAnim }] }
+                                            ]}
+                                        />
+                                        <Text style={styles.alignFaceText}>Yüzünü Çerçeveye Hizala</Text>
+                                    </View>
+                                </CameraView>
+                            )}
+                        </View>
 
-            <Animated.View style={[styles.contentContainer, { opacity: fadeAnim }]}>
-                {/* Kamera Önizleme Alanı (Placeholder) */}
-                <View style={styles.cameraPreview}>
-                    {/* Yüzü hizalama metni */}
-                    <Text style={styles.alignFaceText}>Yüzünüzü şeklin içine yerleştirin</Text>
+                        {/* Alt Kontroller */}
+                        <View style={styles.bottomControls}>
+                            <TouchableOpacity style={styles.blurButton} onPress={handleOpenGallery}>
+                                <Feather name="image" size={24} color="#FFF" />
+                            </TouchableOpacity>
 
-                    {/* Yüz çerçevesi - Oval Şekil */}
-                    <Animated.View
-                        style={[
-                            styles.faceFrame,
-                            { transform: [{ scale: pulseAnim }] }
-                        ]}
-                    />
+                            <TouchableOpacity style={styles.mainCaptureBtn} onPress={handleTakePhoto}>
+                                <View style={styles.innerCaptureBtn}>
+                                    <Ionicons name="scan" size={32} color="#7e96d4" />
+                                </View>
+                            </TouchableOpacity>
 
-                    {/* Kamera Önizleme (Yer Tutucu Metin) */}
-                    <Text style={{ color: LIGHT_GREEN, marginTop: 100 }}>Kamera Önizlemesi</Text>
+                            <TouchableOpacity style={styles.blurButton} onPress={() => setType(t => t === 'back' ? 'front' : 'back')}>
+                                <Ionicons name="camera-reverse" size={24} color="#FFF" />
+                            </TouchableOpacity>
+                        </View>
+
+                    </Animated.View>
                 </View>
-
-                {/* Alt butonlar: Sol (Galeri), Orta (Çekim), Sağ (Boşluk) */}
-                <View style={styles.bottomControls}>
-
-                    {/* 1. Galeri Butonu (Sol) */}
-                    <TouchableOpacity style={styles.controlButton} onPress={handleOpenGallery}>
-                        <Feather name="image" size={28} color={LIGHT_GREEN} />
-                    </TouchableOpacity>
-                 
-                    {/* 2. Fotoğraf Çek Butonu (Orta) */}
-                    <TouchableOpacity style={styles.captureButton} onPress={handleTakePhoto}>
-                        <Ionicons name="scan-outline" size={36} color={DARK_BLUE} />
-                    </TouchableOpacity>
-                    
-                    {/*Silinecek*/}
-                    <TouchableOpacity style={styles.controlButton} onPress={handleTest}>
-                        <Feather name="code" size={20} color={DARK_GREEN} />
-                        <Text style={styles.controlButton}>Test</Text>
-                    </TouchableOpacity>
-
-                    {/* 3. Boşluk (Sağ) - Çekim butonunu ortalamak için */}
-                    <View style={styles.placeholder} />
-                </View>
-            </Animated.View>
+            </ImageBackground>
         </View>
     );
 }

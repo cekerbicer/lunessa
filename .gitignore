@@ -23,5 +23,5 @@ yarn-error.log*
 
 # Supabase client config (contains keys)
 supabase.js
-supabase copy.js
+
 

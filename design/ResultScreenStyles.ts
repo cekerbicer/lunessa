@@ -2,92 +2,148 @@ import { StyleSheet, Dimensions } from 'react-native';
 
 const { height, width } = Dimensions.get('window');
 
-const DARK_GREEN = '#16B576';
 const KOYU_MAVI = '#2F3A66';
-const MOR = '#5F4890'; 
-const ACIK_MOR = '#8B5EA9';
+const seventhColor = '#ff8e6d';
 
 const styles = StyleSheet.create({
-    container: {
+    backgroundImage: {
         flex: 1,
-        backgroundColor: '#FFFFFF', // Beyaz arkaplan
-        justifyContent: 'flex-start', // İçeriği yukarı hizala
-        alignItems: 'center',
-        paddingTop: height * 0.05,
+        width: width,
+        height: height,
     },
-    // Başlık/Metin 1 için alan
+    scrollContent: {
+        flexGrow: 1,
+        alignItems: 'center',
+        paddingVertical: 32, 
+        paddingBottom: 100,
+        paddingHorizontal: 20,
+    },
     headerContainer: {
-        width: '85%',
+        width: '100%',
         marginBottom: 20,
         alignItems: 'center',
     },
-    // Başlık (Metin 1) stili
     headerTitle: {
+        fontSize: 26,
+        fontWeight: 'bold',
+        color: '#FFFFFF', // Arkaplan üzerinde beyaz daha iyi durur
+        textAlign: 'center',
+        marginTop: 80,
+    },
+    subHeader: {
+        color: 'white',
+        opacity: 0.9,
+        textAlign: 'center',
+        fontSize: 16,
+        marginTop: 5,
+    },
+    resultCard: {
+        width: '100%',
+        backgroundColor: '#fff',
+        borderRadius: 30,
+        padding: 25,
+        alignItems: 'center',
+        // Sabit height kaldırıldı, ScrollView içeriğe göre büyüyecek
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 5 },
+        shadowOpacity: 0.2,
+        shadowRadius: 10,
+        elevation: 10,
+    },
+    cardTopSection: {
+        alignItems: 'center',
+        width: '100%',
+        marginBottom: 20,
+    },
+    ciltImage: {
+        width: 100,
+        height: 100,
+        resizeMode: 'contain',
+    },
+    ciltTipiTitle: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: KOYU_MAVI,
-        textAlign: 'center',
-        lineHeight: 30,
+        color: '#333',
+        marginTop: 10,
+        letterSpacing: 1
     },
-
-    // Sonuç Kartı (Animasyonlu Kutu)
-    resultCard: {
-        width: '90%',
-        maxHeight: height * 0.75, // Ekranın %75'ini kaplar
-        backgroundColor: MOR,
-        borderRadius: 20,
-        padding: 25,
-        alignItems: 'flex-start',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.25,
-        shadowRadius: 5,
-        elevation: 8,
-    },
-
-    // Metin 2 Topluluğu (Liste)
-    sectionTitle: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: '#FFFFFF',
-        marginBottom: 15,
-        borderBottomWidth: 1,
-        borderBottomColor: 'rgba(255, 255, 255, 0.5)',
-        paddingBottom: 5,
-        width: '100%',
-    },
-    listContainer: {
-        flexGrow: 1,
-        paddingBottom: 20, 
-    },
-    listItem: {
+    statusBadge: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 10,
+        marginTop: 15,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 20,
+        borderWidth: 1,
     },
-    listItemText: {
-        fontSize: 16,
-        color: '#FFFFFF',
-        marginLeft: 10,
+    warningContainer: {
+        backgroundColor: 'rgba(251, 178, 153, 0.15)', 
+        padding: 15,
+        borderRadius: 25,
+        width: '100%',
+        marginBottom: 25,
+        borderLeftWidth: 5,
+        borderLeftColor: '#ff5920', 
+        alignSelf: 'stretch',
+        borderWidth: 1,
+        borderColor: 'rgba(251, 178, 153, 0.3)',
     },
-    // Liste maddesi için farklı renkli ikon (Temaya uygun yeşil)
-    iconStyle: {
-        color: DARK_GREEN,
+    warningHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 8,
     },
-
-    // Alışkanlık Seçimi Butonu
+    warningTitle: {
+        color: '#ff5920', 
+        fontWeight: '700', 
+        fontSize: 14,
+        marginLeft: 8,
+        letterSpacing: 0.3,
+    },
+    warningText: {
+        color: '#7A5C55', 
+        fontSize: 12,
+        lineHeight: 20,
+        fontWeight: '600',
+    },
+    cardBottomSection: {
+        width: '100%',
+        alignItems: 'center',
+    },
+    infoText: {
+        textAlign: 'center',
+        color: '#888',
+        marginBottom: 20,
+        fontSize: 14,
+        lineHeight: 20,
+    },
     habitButton: {
         width: '100%',
-        backgroundColor: DARK_GREEN,
-        borderRadius: 15,
-        paddingVertical: 15,
+        backgroundColor: '#5a79d3',
+        borderRadius: 20,
+        paddingVertical: 16,
         alignItems: 'center',
-        marginTop: 25,
+        shadowColor: seventhColor,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
+        elevation: 5,
     },
     habitButtonText: {
         fontSize: 18,
         fontWeight: 'bold',
         color: '#FFFFFF',
+    },
+    durumText: {
+        fontSize: 15,
+        color: '#64748B',
+        marginTop: 6,
+        fontWeight: '500',
+    },
+    // EKSİK OLAN KISIM BURASI:
+    sorunHighlight: {
+        fontWeight: '800',
+        color: '#FF8E6D', // ACCENT_ORANGE renginiz
     },
 });
 

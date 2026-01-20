@@ -1,92 +1,214 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StatusBar, SafeAreaView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { 
+    View, 
+    Text, 
+    TouchableOpacity, 
+    SafeAreaView,
+    ScrollView, 
+    TextInput,
+    Alert 
+} from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { questions, totalQuestions } from '../../testQ'; 
-
 import styles from '../../design/TestScreenStyles';
 
-// Tip Tanımı: Cevaplar objesinin anahtarı number (soru id'si) ve değeri string (seçenek id'si) olmalı.
+// Supabase client'ı import et (Yolunu kendi projene göre ayarla)
+import { supabase } from '../../supabase'; 
+
 interface AnswersState {
     [key: number]: string;
 }
 
 export default function TestScreen() {
     const navigation = useNavigation();
+    const route = useRoute(); 
+    // @ts-ignore
+    const imageUri = route.params?.imageUri;
+
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    // 💡 DÜZELTME: Cevaplar için tip tanımı eklendi
     const [answers, setAnswers] = useState<AnswersState>({}); 
+    const [loading, setLoading] = useState(false); // Kayıt sırasında butonu kilitlemek için
 
     const currentQuestion = questions[currentQuestionIndex];
-    
-    // Temanızdaki renk tanımını burada da kullanalım
     const DARK_GREEN = '#16B576';
-    const DARK_BLUE = '#2F3A66';
 
+    // ... (handleSelectOption, handleNumericInput, handleBack fonksiyonları aynı kalacak) ...
+    const handleSelectOption = (optionId: string) => {
+        setAnswers(prev => ({ ...prev, [currentQuestion.id]: optionId }));
+    };
 
-    const handleAnswer = (optionId: string) => {
-        // Cevabı kaydet
-        // currentQuestion.id bir sayı olduğundan, key olarak kullanırken sorun yaşamaz
-        const newAnswers = { ...answers, [currentQuestion.id]: optionId };
-        setAnswers(newAnswers);
+    const handleNumericInput = (value: string) => {
+        const numericValue = value.replace(/[^0-9]/g, '');
+        setAnswers(prev => ({ ...prev, [currentQuestion.id]: numericValue }));
+    };
 
-        // Bir sonraki soruya geç veya testi bitir
-        if (currentQuestionIndex < totalQuestions - 1) {
-            setCurrentQuestionIndex(currentQuestionIndex + 1);
-        } else {
-            console.log('Test Tamamlandı. Cevaplar:', newAnswers);
-            
-            // Son Adım: Test bitince Wait ekranına yönlendir
-            navigation.navigate('Wait' as never);
+    const handleBack = () => {
+        if (currentQuestionIndex > 0) {
+            setCurrentQuestionIndex(currentQuestionIndex - 1);
         }
     };
 
+    // --- YENİ EKLENEN FONKSİYON: SUPABASE KAYIT ---
+    const saveTestToSupabase = async (finalAnswers: AnswersState) => {
+        try {
+            // 1. Oturum açmış kullanıcıyı al
+            const { data: { user } } = await supabase.auth.getUser();
+
+            if (!user) {
+                Alert.alert("Hata", "Kullanıcı oturumu bulunamadı.");
+                return false;
+            }
+
+            // 2. Veritabanına kaydet
+            const { error } = await supabase
+                .from('user_tests')
+                .insert([
+                    {
+                        user_id: user.id,
+                        answers: finalAnswers, // Tüm cevapları JSON olarak kaydeder
+                        // created_at otomatik eklenir
+                    }
+                ]);
+
+            if (error) throw error;
+            console.log("✅ Test başarıyla Supabase'e kaydedildi.");
+            return true;
+
+        } catch (error) {
+            console.error("Supabase kayıt hatası:", error);
+            Alert.alert("Hata", "Test sonuçları kaydedilemedi.");
+            return false;
+        }
+    };
+
+    // --- GÜNCELLENEN BÖLÜM: BİTİR VE GÖNDER ---
+    const finishTestAndGoToWait = async () => {
+        if (!imageUri) {
+            Alert.alert("Hata", "Analiz edilecek resim bulunamadı!");
+            return;
+        }
+
+        setLoading(true); // Yükleniyor başlat
+
+        // Biyometrik verileri hazırla
+        const userBio = {
+            boy: answers[17] ? parseInt(answers[17]) : 170,
+            kilo: answers[18] ? parseInt(answers[18]) : 65
+        };
+
+        // 1. ÖNCE VERİTABANINA KAYDET
+        // Not: await kullanarak kaydın bitmesini bekliyoruz.
+        // İstersen bunu Wait ekranında da yapabilirsin ama burada yapmak garantidir.
+        const isSaved = await saveTestToSupabase(answers);
+
+        setLoading(false); // Yükleniyor bitir
+
+        if (isSaved) {
+            console.log("📦 Veriler Wait ekranına taşınıyor...");
+            (navigation as any).navigate('Wait', { 
+                imageUri: imageUri,
+                answers: answers,
+                userBio: userBio
+            });
+        }
+    };
+
+    const handleNext = () => {
+        if (currentQuestionIndex < totalQuestions - 1) {
+            setCurrentQuestionIndex(currentQuestionIndex + 1);
+        } else {
+            finishTestAndGoToWait();
+        }
+    };
+
+    const isAnswerSelected = !!answers[currentQuestion.id] && answers[currentQuestion.id] !== '';
+
     return (
         <SafeAreaView style={styles.safeArea}>
-            <StatusBar barStyle="light-content" />
+            {/* ... (Tasarım kodları aynı kalacak, sadece butona disabled ekleyebilirsin) ... */}
             <View style={styles.container}>
-                
-                {/* İlerleme Çubuğu */}
-                <View style={styles.progressBarContainer}>
-                    <View style={[
-                        styles.progressBar,
-                        { width: `${((currentQuestionIndex + 1) / totalQuestions) * 100}%` }
-                    ]} />
-                </View>
 
-                <View style={styles.questionContainer}>
-                    {/* Soru Sayısı */}
-                    <Text style={styles.questionNumber}>
-                        Soru {currentQuestionIndex + 1} / {totalQuestions}
-                    </Text>
-
-                    {/* Soru Metni */}
-                    <Text style={styles.questionText}>
-                        {currentQuestion.question}
-                    </Text>
-
-                    {/* Cevap Seçenekleri */}
-                    <View style={styles.optionsContainer}>
-                        {currentQuestion.options.map((option) => (
-                            <TouchableOpacity
-                                key={option.id}
-                                style={[
-                                    styles.optionButton,
-                                    // 💡 DÜZELTME: Cevap seçildiğinde kenarlığı belirginleştir
-                                    answers[currentQuestion.id] === option.id && styles.optionButtonSelected
-                                ]}
-                                onPress={() => handleAnswer(option.id)}
-                            >
-                                <Text style={styles.optionText}>{option.text}</Text>
-                                {/* İkon: Cevap seçildiğinde yeşil tik gösterir */}
-                                {/* 💡 DÜZELTME: Hata alınan koşul. Tip güvenliği artık sağlanıyor. */}
-                                {answers[currentQuestion.id] === option.id && ( 
-                                    <Ionicons name="checkmark-circle" size={24} color={DARK_GREEN} style={styles.checkIcon} />
-                                )}
-                            </TouchableOpacity>
-                        ))}
+                 <ScrollView
+                    style={{ flex: 1 }}
+                    contentContainerStyle={{ flexGrow: 1 }} 
+                    showsVerticalScrollIndicator={false}
+                >
+                     <View style={styles.progressBarContainer}>
+                        <View style={[
+                            styles.progressBar,
+                            { width: `${((currentQuestionIndex + 1) / totalQuestions) * 100}%` }
+                        ]} />
                     </View>
-                </View>
+
+                    <View style={styles.questionContainer}>
+                        <Text style={styles.questionNumber}>
+                            Soru {currentQuestionIndex + 1} / {totalQuestions}
+                        </Text>
+                        <Text style={styles.questionText}>
+                            {currentQuestion.question}
+                        </Text>
+
+                        {/* Cevap Alanı */}
+                        <View style={styles.optionsContainer}>
+                            {currentQuestion.type === 'numeric' ? (
+                                <TextInput
+                                    style={styles.numericInput}
+                                    placeholder="Cevabınızı buraya yazın (Sadece sayı)"
+                                    placeholderTextColor="#999"
+                                    keyboardType="numeric"
+                                    value={answers[currentQuestion.id] || ''}
+                                    onChangeText={handleNumericInput}
+                                />
+                            ) : (
+                                currentQuestion.options.map((option) => (
+                                    <TouchableOpacity
+                                        key={option.id}
+                                        style={[
+                                            styles.optionButton,
+                                            answers[currentQuestion.id] === option.id && styles.optionButtonSelected
+                                        ]}
+                                        onPress={() => handleSelectOption(option.id)}
+                                    >
+                                        <Text style={styles.optionText}>{option.text}</Text>
+                                        {answers[currentQuestion.id] === option.id && ( 
+                                            <Ionicons name="checkmark-circle" size={24} color={DARK_GREEN} style={styles.checkIcon} />
+                                        )}
+                                    </TouchableOpacity>
+                                ))
+                            )}
+                        </View>
+                    </View> 
+
+                    {/* Navigasyon Butonları */}
+                    <View style={styles.navigationContainer}>
+                        <TouchableOpacity
+                            onPress={handleBack}
+                            style={[
+                                styles.navButton,
+                                styles.navButtonSecondary,
+                                currentQuestionIndex === 0 && { opacity: 0 } 
+                            ]}
+                            disabled={currentQuestionIndex === 0 || loading}
+                        >
+                            <Text style={[styles.navButtonText, styles.navButtonTextSecondary]}>Geri</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            onPress={handleNext}
+                            style={[
+                                styles.navButton,
+                                styles.navButtonPrimary,
+                                (!isAnswerSelected || loading) && styles.navButtonDisabled 
+                            ]}
+                            disabled={!isAnswerSelected || loading}
+                        >
+                            <Text style={styles.navButtonText}>
+                                {loading ? 'Kaydediliyor...' : (currentQuestionIndex === totalQuestions - 1 ? 'Testi Bitir' : 'İleri')}
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
             </View>
         </SafeAreaView>
     );

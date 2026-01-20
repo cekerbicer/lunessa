@@ -2,106 +2,139 @@ import { StyleSheet, Dimensions } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
-// Renk Tanımları
-const DARK_GREEN = '#16B576'; // Koyu Yeşil (Vurgu, Input Metni, Çizgi)
-const LIGHT_GREEN = '#B7EACD'; // Açık Yeşil (Segment ve Buton Arkaplanı)
-const DARK_BLUE = '#2F3A66'; // Lacivert (Başlıklar, Brand Adı, Input Label)
-
 const styles = StyleSheet.create({
-    container: {
+    backgroundImage: {
         flex: 1,
-        backgroundColor: '#FFFFFF',
+        width: '100%',
+        height: '100%',
     },
-    content: {
+    overlay: {
         flex: 1,
+        backgroundColor: 'rgba(15, 23, 42, 0.3)', // Görseli çok az karartarak derinlik katar
+    },
+    scrollContent: {
+        flexGrow: 1,
         justifyContent: 'center',
+        paddingHorizontal: 25,
+        paddingVertical: 50,
+    },
+    // HATA VEREN KISIM BURASIYDI, EKLENDİ:
+    mainContent: {
+        width: '100%',
         alignItems: 'center',
-        paddingHorizontal: 40,
+    },
+    headerArea: {
+        alignItems: 'center',
+        marginBottom: 40,
     },
     brandName: {
-        fontSize: 28,
-        fontWeight: '700',
-        color: DARK_BLUE,
-        marginBottom: 40,
-        letterSpacing: 1,
+        fontSize: 48,
+        fontWeight: '900',
+        color: '#FFF',
+        letterSpacing: -2,
+        textShadowColor: 'rgba(0, 0, 0, 0.2)',
+        textShadowOffset: { width: 0, height: 4 },
+        textShadowRadius: 10,
+    },
+    brandSubtitle: {
+        fontSize: 16,
+        color: '#F1F5F9',
+        fontWeight: '500',
+        marginTop: 2,
+        opacity: 0.9,
     },
     segmentedControl: {
         flexDirection: 'row',
-        backgroundColor: LIGHT_GREEN,
-        borderRadius: 25,
-        padding: 4,
-        marginBottom: 60,
-        width: 220,
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+        borderRadius: 20,
+        padding: 5,
+        marginBottom: 30,
+        width: '100%',
+        maxWidth: 280,
     },
     segmentButton: {
         flex: 1,
-        paddingVertical: 10,
-        borderRadius: 21,
+        paddingVertical: 12,
         alignItems: 'center',
+        borderRadius: 16,
     },
     segmentButtonActive: {
-        backgroundColor: DARK_GREEN,
+        backgroundColor: '#FFF',
     },
     segmentText: {
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: '600',
-        color: DARK_BLUE,
+        color: '#FFF',
     },
     segmentTextActive: {
-        color: '#FFFFFF',
+        color: '#0F172A',
     },
-    formContainer: {
+    glassCard: {
+        backgroundColor: 'rgba(255, 255, 255, 0.96)', // Hafif geçirgen cam efekti
+        borderRadius: 32,
+        padding: 25,
         width: '100%',
-        maxWidth: 300,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 20 },
+        shadowOpacity: 0.15,
+        shadowRadius: 30,
+        elevation: 10,
     },
-    inputWrapper: {
-        marginBottom: 30,
+    inputGroup: {
+        marginBottom: 20,
     },
-    inputLabel: {
-        fontSize: 16,
+    label: {
+        fontSize: 14,
         fontWeight: '700',
-        color: DARK_BLUE, // 🟢 İstenen koyu yeşil başlık rengi
+        color: '#1E293B',
         marginBottom: 8,
+        marginLeft: 4,
     },
-    inputField: {
-        height: 38,
-        fontSize: 15,
-        color: DARK_GREEN, // 🟢 İstenen koyu yeşil yazı rengi
-    },
-    dashedLine: {
-        borderBottomWidth: 1.5,
-        borderBottomColor: DARK_GREEN, // 🟢 Çizgi rengi de koyu yeşil
-        borderStyle: 'dashed',
-    },
-    submitButton: {
-        backgroundColor: LIGHT_GREEN, // #B7EACD
-        borderWidth: 2, // ⬅️ Bu, kenarlık ekliyor
-        borderColor: DARK_GREEN, // #16B576
-        borderRadius: 25,
-        paddingVertical: 14,
-        alignItems: 'center',
-        marginTop: 10,
-    },
-    submitButtonText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: DARK_BLUE, // #2F3A66
-    },
-    passwordContainer: {
+    inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
+        backgroundColor: '#F8FAFC',
+        borderRadius: 16,
+        paddingHorizontal: 15,
+        height: 56,
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
     },
-
-    passwordInput: {
+    inputIcon: {
+        marginRight: 12,
+    },
+    input: {
         flex: 1,
+        fontSize: 15,
+        color: '#0F172A',
     },
-    passwordToggle: {
-        position: 'absolute',
-        right: 0, 
-        bottom:-1,
-        paddingVertical: 8, 
-        paddingHorizontal: 5, 
+    primaryButton: {
+        backgroundColor: '#16B576', // Logonuzdaki yeşil tonu
+        borderRadius: 18,
+        height: 60,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 10,
+        shadowColor: '#16B576',
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.3,
+        shadowRadius: 15,
+        elevation: 8,
     },
+    primaryButtonText: {
+        color: '#FFF',
+        fontSize: 17,
+        fontWeight: '700',
+    },
+    forgotBtn: {
+        marginTop: 20,
+        alignItems: 'center',
+    },
+    forgotText: {
+        color: '#64748B',
+        fontSize: 14,
+        fontWeight: '600',
+    }
 });
 
 export default styles;
